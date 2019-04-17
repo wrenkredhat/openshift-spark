@@ -17,8 +17,7 @@
 # This is a Dockerfile for the openshift-spark:2.4.1 image.
 
 # Default values of build arguments.
-ARG VERSION="latest"
-FROM centos:${VERSION}
+FROM centos:latest
 ARG SPARK_VERSION="2.4.1"
 ARG SPARK_DOWNLOAD_URL="https://www-us.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz"
 ARG SPARK_DOWNLOAD_MD5SUM="feef63426af19b9abcfef273072b1e68"
@@ -44,6 +43,9 @@ RUN cd opt; tar -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     rm -fr spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop2.7 /opt/spark
 
-WORKDIR ${SPARK_HOME}/work-dir
+WORKDIR ${SPARK_HOME}
+
+RUN mkdir myapp
+COPY helloworld.jar myapp
 
 CMD ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
