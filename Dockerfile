@@ -45,7 +45,7 @@ RUN cd opt; tar -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
 
 WORKDIR ${SPARK_HOME}
 
-RUN mkdir myapp
-COPY helloworld.jar myapp
+#RUN mkdir myapp
+#COPY helloworld.jar myapp
 
 CMD ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
