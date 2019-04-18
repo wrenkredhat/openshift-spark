@@ -14,7 +14,7 @@
 #
 # ------------------------------------------------------------------------
 #
-# This is a Dockerfile for the openshift-spark:2.4.1 image.
+# This is a Dockerfile for the spark:2.4.1 image.
 
 # Default values of build arguments.
 FROM centos:latest
@@ -25,7 +25,8 @@ ARG SPARK_DOWNLOAD_MD5SUM="feef63426af19b9abcfef273072b1e68"
 # Default values of environment variables.
 ENV \
     SPARK_HOME="/opt/spark" \
-    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${SPARK_HOME}/bin"
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${SPARK_HOME}/bin" \
+    TINI_VERSION="v0.18.0"
 
 USER root
 
@@ -33,6 +34,10 @@ USER root
 RUN yum install -y java-1.8.0-openjdk wget && \
     yum clean all && \
     rm -rf /var/cache/yum
+
+# Add Tini - init for containers
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
+RUN chmod +x /sbin/tini
 
 # Download Spark and verify md5sum of file
 RUN cd /opt; wget -q --progress=bar ${SPARK_DOWNLOAD_URL} -O spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
@@ -43,9 +48,9 @@ RUN cd opt; tar -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     rm -fr spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop2.7 /opt/spark
 
+
+COPY entrypoint.sh ${SPARK_HOME}
+
 WORKDIR ${SPARK_HOME}
 
-#RUN mkdir myapp
-#COPY helloworld.jar myapp
-
-CMD ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+ENTRYPOINT ["./entrypoint.sh"]
