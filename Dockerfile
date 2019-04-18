@@ -51,6 +51,11 @@ RUN cd opt; tar --no-same-owner -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz &&
     rm -fr spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop2.7 /opt/spark
 
+# Set root group (0) permissions to the Spark directory and files.
+# By default, OpenShift Enterprise runs containers using an arbitrarily assigned user ID.
+# Directories and files that may be written to by processes in the image should be owned by the root group and be read/writable by that group.
+RUN chgrp -R 0 ${SPARK_HOME} && chmod -R g+rw ${SPARK_HOME}
+
 COPY entrypoint.sh ${SPARK_HOME}
 
 WORKDIR ${SPARK_HOME}
