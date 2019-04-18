@@ -19,6 +19,15 @@ MASTER_URL=$2
 
 set -ex
 
+myuid=$(id -u)
+mygid=$(id -g)
+uidentry=$(getent passwd $myuid)
+
+# Automatically provide a passwd file entry for the anonymous uid
+if [ -z "$uidentry" ]; then
+    echo "$myuid:x:$myuid:$mygid:anonymous uid:$SPARK_HOME:/bin/false" >> /etc/passwd
+fi
+
 case $SPARK_CMD in
     master)
       CMD=(

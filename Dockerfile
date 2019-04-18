@@ -30,6 +30,9 @@ ENV \
 
 USER root
 
+# Set permissions to passwd with group-id 0 and write access
+RUN chgrp root /etc/passwd && chmod ug+rw /etc/passwd
+
 # Install required RPMs and ensure that the packages were installed
 RUN yum install -y java-1.8.0-openjdk wget && \
     yum clean all && \
