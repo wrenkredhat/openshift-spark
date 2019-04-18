@@ -21,7 +21,11 @@ set -ex
 
 myuid=$(id -u)
 mygid=$(id -g)
+
+# turn off an error code
+set +e
 uidentry=$(getent passwd $myuid)
+set -e
 
 # Automatically provide a passwd file entry for the anonymous uid
 if [ -z "$uidentry" ]; then
