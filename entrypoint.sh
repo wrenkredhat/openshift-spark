@@ -20,23 +20,22 @@ MASTER_URL=$2
 set -ex
 
 case $SPARK_CMD in
-  master)
-    CMD=(
-      "$SPARK_HOME/bin/spark-class"
-      "org.apache.spark.deploy.master.Master"
-    )
-    ;;
-  worker)
-    CMD=(
-      "$SPARK_HOME/bin/spark-class"
-      "org.apache.spark.deploy.worker.Worker"
-      $MASTER_URL
-    )
-    ;;
-
+    master)
+      CMD=(
+        "$SPARK_HOME/bin/spark-class"
+        "org.apache.spark.deploy.master.Master"
+      )
+      ;;
+    worker)
+      CMD=(
+        "$SPARK_HOME/bin/spark-class"
+        "org.apache.spark.deploy.worker.Worker"
+        $MASTER_URL
+      )
+      ;;
     *)
       echo "Unknown command: $SPARK_CMD" 1>&2
       exit 1
-  esac
+esac
 
 exec /sbin/tini -s -- "${CMD[@]}"
