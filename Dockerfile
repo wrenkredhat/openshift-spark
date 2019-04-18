@@ -35,7 +35,7 @@ RUN chgrp root /etc/passwd && chmod ug+rw /etc/passwd
 
 # Install required RPMs and ensure that the packages were installed
 RUN yum install -y java-1.8.0-openjdk wget && \
-    yum clean all && \
+    yum clean all -y && \
     rm -rf /var/cache/yum
 
 # Add Tini - init for containers
@@ -47,10 +47,9 @@ RUN cd /opt; wget -q --progress=bar ${SPARK_DOWNLOAD_URL} -O spark-${SPARK_VERSI
     echo "${SPARK_DOWNLOAD_MD5SUM} spark-${SPARK_VERSION}-bin-hadoop2.7.tgz" | md5sum -c -
 
 # Extract the Spark
-RUN cd opt; tar -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
+RUN cd opt; tar --no-same-owner -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     rm -fr spark-${SPARK_VERSION}-bin-hadoop2.7.tgz && \
     ln -s /opt/spark-${SPARK_VERSION}-bin-hadoop2.7 /opt/spark
-
 
 COPY entrypoint.sh ${SPARK_HOME}
 
