@@ -1,4 +1,4 @@
-# Openshift Spark
+# OpenShift Spark
 
 Openshift Spark is container based on the Centos 7 image for deploying Spark 2.4.1 cluster to OpenShift.
 
