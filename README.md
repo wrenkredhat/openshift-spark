@@ -12,18 +12,25 @@ OpenShift is an open source container application platform by [Red Hat](https://
 
 ## Usage
 
-### Build
+### Clone
 
-Create a build config in the OpenShift and start build of Spark image.
+Clone this repo to your local machine.
 
 ```
 $ git clone https://github.com/bodz1lla/openshift-spark.git
 $ cd openshift-spark
+```
+
+### Build
+
+Create a build config in the OpenShift and start build the Spark image.
+
+```
 $ oc create -f build-spark-base.yaml
 $ oc create imagestream spark
 $ oc start-build spark-2.4.2
 ```
-When the build has started, please check logs and status.
+When the build has finished, please check logs and status.
 
 ```
 $ oc logs -f bc/spark-2.4.2
@@ -36,7 +43,7 @@ spark-2.4.2-1-build   0/1       Completed   0          6m
 
 #### Spark Master
 
-Create a deployment config.
+Create a deployment config and start pod.
 
 ```
 $ oc create -f deploy-spark-master.yaml
@@ -63,5 +70,9 @@ $ oc logs -f dc/spark-master
 >Please make sure to update tests as appropriate.
 
 ## Authors
+
+![Bogdan Denysiuk](https://github.com/bodz1lla)
+
+![Wolfgang Renk](https://github.com/wrenkredhat)
 
 ## License
