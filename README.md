@@ -34,6 +34,22 @@ spark-2.4.2-1-build   0/1       Completed   0          6m
 
 ### Deploy
 
+#### Spark Master
+
+Create a deployment config.
+
+```
+$ oc create -f deploy-spark-master.yaml
+```
+
+When master has started, please check logs and state.
+
+```
+$ oc logs -f dc/spark-master
+```
+
+#### Spark Workers
+
 ## Contributing
 
 1. Fork it (https://github.com/bodz1lla/openshift-spark/fork)
