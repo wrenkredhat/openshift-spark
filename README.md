@@ -57,6 +57,8 @@ $ oc logs -f dc/spark-master
 
 #### Spark Workers
 
+> To be continue...
+
 ## Contributing
 
 1. Fork it (https://github.com/bodz1lla/openshift-spark/fork)
@@ -66,13 +68,11 @@ $ oc logs -f dc/spark-master
 5. Create a new Pull Request
 
 >Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
->
->Please make sure to update tests as appropriate.
 
 ## Authors
 
-![Bogdan Denysiuk](https://github.com/bodz1lla)
+* [Bogdan Denysiuk](https://github.com/bodz1lla)
 
-![Wolfgang Renk](https://github.com/wrenkredhat)
+* [Wolfgang Renk](https://github.com/wrenkredhat)
 
 ## License
