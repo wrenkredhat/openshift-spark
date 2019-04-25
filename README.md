@@ -10,9 +10,20 @@ OpenShift is an open source container application platform by [Red Hat](https://
 
 [https://www.openshift.com/](https://www.openshift.com/)
 
-## Installation
-
 ## Usage
+
+### Build
+
+Create a build config in the OpenShift and start build of Spark image.
+
+```
+git clone https://github.com/bodz1lla/openshift-spark.git
+cd openshift-spark
+oc create -f build-spark-base.yaml
+oc create imagestream spark
+oc start-build spark-2.4.1
+```
+
 
 ## Contributing
 

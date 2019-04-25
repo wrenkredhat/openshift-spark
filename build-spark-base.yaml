@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: BuildConfig
 metadata:
-  name: spark-base-build
+  name: spark-2.4.2
 spec:
   source:
     git:
@@ -14,4 +14,4 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: sparkbaseimage:latest
+      name: spark:2.4.2

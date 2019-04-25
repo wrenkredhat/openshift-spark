@@ -14,13 +14,13 @@
 #
 # ------------------------------------------------------------------------
 #
-# This is a Dockerfile for the spark:2.4.1 image.
+# This is a Dockerfile for the spark:2.4.2 image.
 
 # Default values of build arguments.
 FROM centos:latest
-ARG SPARK_VERSION="2.4.1"
-ARG SPARK_DOWNLOAD_URL="https://www-us.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz"
-ARG SPARK_DOWNLOAD_MD5SUM="feef63426af19b9abcfef273072b1e68"
+ARG SPARK_VERSION="2.4.2"
+ARG SPARK_DOWNLOAD_URL="https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop2.7.tgz"
+ARG SPARK_DOWNLOAD_MD5SUM="cbea5f41e1c622de9a480fe4e1f48bd3"
 
 # Default values of environment variables.
 ENV \
