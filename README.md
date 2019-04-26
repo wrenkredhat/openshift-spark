@@ -1,6 +1,6 @@
 # OpenShift Spark
 
-Openshift Spark is container based on the Centos 7 image for deploying Spark 2.4.2 cluster to OpenShift.
+Openshift Spark is an application based on the Centos 7 image for deploying Apache Spark 2.4.2 cluster to OpenShift.
 
 Apache Spark is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala, Python and R, and an optimized engine that supports general execution graphs.
 
@@ -76,3 +76,8 @@ $ oc logs -f dc/spark-master
 * [Wolfgang Renk](https://github.com/wrenkredhat)
 
 ## License
+
+## Acknowledgments
+
+* [The Apache Software Foundation](https://github.com/apache) - Apache Spark
+* [Thomas Orozco](https://github.com/krallin) - init for containers [tini](https://github.com/krallin/tini)
