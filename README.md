@@ -59,20 +59,20 @@ spark-2.4.2-1-build    0/1       Completed   0          4m
 spark-master-1-mxlhj   1/1       Running     0          55s
 ```
 
-Create a service with endpoints.
+Create a services with endpoints.
 
 ```
 $ oc create -f openshift/service_spark_master.yaml
+$ oc create -f openshift/service_spark_master_ui.yaml
 ```
 
-Expose the services and create the routes to allow external connections reach it by name.
+Expose the service and create the route to allow external connections reach Spark WebUI by name.
 
 ```
-$ oc expose svc/spark-master --name=spark-master --port=7077
-$ oc expose svc/spark-master --name=spark-master-ui --port=8080
+$ oc expose svc/spark-master-ui --name=spark-master-ui --port=8080
 
 ```
-Check route and access to the Spark MasterUI via cURL or Web browser.
+Check route and try to access the Spark via Web browser or cURL.
 
 ```
 $ oc get route spark-master-ui
@@ -118,7 +118,8 @@ spec:
       -----BEGIN PRIVATE KEY-----
       ...
       -----END PRIVATE KEY-----
-    termination: edge    
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect    
 ```
 
 > Don't forget about YAML syntax and 2 space indent.
@@ -141,6 +142,33 @@ Create a deployment config and start pods.
 ```
 $ oc create -f openshift/deploy-spark-workers.yaml
 ```
+
+#### Spark Submit
+
+##### Launching Applications with spark-submit
+
+[Download Spark](https://spark.apache.org/downloads.html) release to local machine.
+
+Check provider global firewall settings and allow TCP connection to the port 30077.  
+
+> Current project runs with Spark version 2.4.2.
+
+> It’s important that the Spark version running on your driver, master, and worker pods all match.
+
+Try to run Python application on a Spark Cluster.
+
+```
+cd spark-2.4.2-bin-hadoop2.7
+
+./bin/spark-submit \
+  --master spark://176.9.28.34:30077 --name myapp  \
+  ${PWD}/examples/src/main/python/pi.py 10
+
+```
+
+If you see successfully created connection to the cluster and running application in Spark UI, means you are done with setup.
+
+Hope you enjoyed the setup and ready to launch your application!
 
 ## Contributing
 
