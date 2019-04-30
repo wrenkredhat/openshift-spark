@@ -164,3 +164,4 @@ $ oc create -f openshift/deploy-spark-workers.yaml
 
 * [The Apache Software Foundation](https://github.com/apache) - Apache Spark
 * [Thomas Orozco](https://github.com/krallin) - init for containers [tini](https://github.com/krallin/tini)
+* Veer Muchandi - video explanation - [OpenShift: Using SSL](https://www.youtube.com/watch?v=rpT5qwcL3bE)
