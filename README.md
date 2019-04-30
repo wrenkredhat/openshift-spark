@@ -49,45 +49,57 @@ Create a deployment config and start pod.
 $ oc create -f openshift/deploy-spark-master.yaml
 ```
 
-When master has started, please check logs and state.
+When master has started, please check logs and state "Running".
 
 ```
 $ oc logs -f dc/spark-master
+$ oc get pod
+NAME                   READY     STATUS      RESTARTS   AGE
+spark-2.4.2-1-build    0/1       Completed   0          4m
+spark-master-1-mxlhj   1/1       Running     0          55s
 ```
 
-Create a master service.
+Create a service with endpoints.
 
 ```
-oc create -f openshift/service_spark_master.yaml
+$ oc create -f openshift/service_spark_master.yaml
 ```
 
-Expose a service and create the routes to allow external connections reach it by name.
+Expose the services and create the routes to allow external connections reach it by name.
 
 ```
-oc expose svc/spark-master --name=spark-master --port=7077
-oc expose svc/spark-master --name=spark-master-ui --port=8080
+$ oc expose svc/spark-master --name=spark-master --port=7077
+$ oc expose svc/spark-master --name=spark-master-ui --port=8080
 
 ```
+Check route and access to the Spark MasterUI via cURL or Web browser.
 
-If you'd like to create secure connection using TLS (selfsigned) handshake with edge termination, please install "keytool" and generate a keystore.
+```
+$ oc get route spark-master-ui
+$ curl -s http://${spark-master-ui}
+```
+
+> If you'd like to configure HTTPS with selfsigned certificate using TLS handshake and edge termination.
+Please install "keytool" and generate a keystore, otherwise just skip this step.
 
 > ATTENTION: Replace a var=${secret} with password.
 
 ```
-keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass ${secret} -validity 360 -keysize 2048
-keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -srcstoretype jks -deststoretype pkcs12
+$ keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass ${secret} -validity 360 -keysize 2048
+# Convert to pkcs12
+$ keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -srcstoretype jks -deststoretype pkcs12
 ```
 
 Once key has been created, open it with OpenSSL.
 
 ```
-openssl pkcs12 -in keystore.p12 -nodes -password pass:${secret}
+$ openssl pkcs12 -in keystore.p12 -nodes -password pass:${secret}
 
 ```
 
 Copy certificate with private key and save in the notes.
 
-Edit you route and create tls configuration in the "spec" collection,  after the "port" key.
+Edit you route and insert TLS configuration in the "spec:" collection,  behind the "port:" key.
 
 ```
 oc edit route spark-master-ui
@@ -111,10 +123,11 @@ spec:
 
 > Don't forget about YAML syntax and 2 space indent.
 
-Check routes and try to access master.
+Check route and try to access via HTTPS.
 
 ```
-oc get routes
+$ oc get route spark-master-ui
+$ curl -sk https://${spark-master-ui}
 ```
 
 #### Spark Workers
@@ -123,12 +136,11 @@ oc get routes
 
 Create a deployment config and start pods.
 
-By default setup with 3 workers, you can change inside the OpenShift worker config.  
+> The default setup starts only 3 workers, you can change this in deploy-spark-worker.yaml. Replace a value in the key "replicas:"
 
 ```
-$ oc create -f openshift/deploy-spark-worker.yaml
+$ oc create -f openshift/deploy-spark-workers.yaml
 ```
-
 
 ## Contributing
 
