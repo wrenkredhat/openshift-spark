@@ -26,7 +26,7 @@ $ cd openshift-spark
 Create a build config in the OpenShift and start build the Spark image.
 
 ```
-$ oc create -f build-spark-base.yaml
+$ oc create -f openshift/build-spark-base.yaml
 $ oc create imagestream spark
 $ oc start-build spark-2.4.2
 ```
@@ -46,7 +46,7 @@ spark-2.4.2-1-build   0/1       Completed   0          6m
 Create a deployment config and start pod.
 
 ```
-$ oc create -f deploy-spark-master.yaml
+$ oc create -f openshift/deploy-spark-master.yaml
 ```
 
 When master has started, please check logs and state.
@@ -55,9 +55,80 @@ When master has started, please check logs and state.
 $ oc logs -f dc/spark-master
 ```
 
+Create a master service.
+
+```
+oc create -f openshift/service_spark_master.yaml
+```
+
+Expose a service and create the routes to allow external connections reach it by name.
+
+```
+oc expose svc/spark-master --name=spark-master --port=7077
+oc expose svc/spark-master --name=spark-master-ui --port=8080
+
+```
+
+If you'd like to create secure connection using TLS (selfsigned) handshake with edge termination, please install "keytool" and generate a keystore.
+
+> ATTENTION: Replace a var=${secret} with password.
+
+```
+keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass ${secret} -validity 360 -keysize 2048
+keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -srcstoretype jks -deststoretype pkcs12
+```
+
+Once key has been created, open it with OpenSSL.
+
+```
+openssl pkcs12 -in keystore.p12 -nodes -password pass:${secret}
+
+```
+
+Copy certificate with private key and save in the notes.
+
+Edit you route and create tls configuration in the "spec" collection,  after the "port" key.
+
+```
+oc edit route spark-master-ui
+
+---
+spec:
+  ...
+  port:
+    targetPort: 8080
+  tls:
+    certificate: |
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+    key: |
+      -----BEGIN PRIVATE KEY-----
+      ...
+      -----END PRIVATE KEY-----
+    termination: edge    
+```
+
+> Don't forget about YAML syntax and 2 space indent.
+
+Check routes and try to access master.
+
+```
+oc get routes
+```
+
 #### Spark Workers
 
-> To be continue...
+##### Deploy
+
+Create a deployment config and start pods.
+
+By default setup with 3 workers, you can change inside the OpenShift worker config.  
+
+```
+$ oc create -f openshift/deploy-spark-worker.yaml
+```
+
 
 ## Contributing
 
