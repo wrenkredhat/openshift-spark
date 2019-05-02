@@ -10,7 +10,7 @@ OpenShift is an open source container application platform by [Red Hat](https://
 
 [https://www.openshift.com/](https://www.openshift.com/)
 
-<span style="color:red"> ** Deployment time: 30-40 mins** </span>.
+> **Deployment time: 30 minutes**
 
 ## Usage
 
