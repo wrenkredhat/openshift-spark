@@ -136,8 +136,6 @@ $ curl -sk https://${SPARK_MASTER_UI}
 
 #### Spark Workers
 
-##### Deploy
-
 Create a deployment config and start workers.
 
 > The default setup starts only 3 workers, you can change this in deploy-spark-worker.yaml file. Replace a value in the key "replicas:"
@@ -158,7 +156,7 @@ spark-workers-1-8fbh2   1/1       Running     0          5m
 spark-workers-1-kfdcm   1/1       Running     0          5m
 ```
 
-If you see the same output with all pods are "Running", means you successfully installed Spark cluster :)
+If you see the same output with all pods are "Running", it means you successfully has installed Spark cluster :)
 
 ## Launching Applications with spark-submit.
 
