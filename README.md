@@ -1,6 +1,6 @@
 # OpenShift Spark
 
-Openshift Spark is an application based on the Centos 7 image for deploying Apache Spark 2.4.2 cluster to OpenShift.
+Openshift Spark is dockerize application based on the Centos 7 image for deploying Apache Spark 2.4.2 cluster to OpenShift.
 
 Apache Spark is a fast and general-purpose cluster computing system. It provides high-level APIs in Java, Scala, Python and R, and an optimized engine that supports general execution graphs.
 
@@ -10,11 +10,13 @@ OpenShift is an open source container application platform by [Red Hat](https://
 
 [https://www.openshift.com/](https://www.openshift.com/)
 
+> <span style="color:red">** Deployment time: 30-40 mins**</span>.
+
 ## Usage
 
 ### Clone
 
-Clone this repo to your local machine.
+Clone this repo to local machine.
 
 ```
 $ git clone https://github.com/bodz1lla/openshift-spark.git
@@ -23,7 +25,7 @@ $ cd openshift-spark
 
 ### Build
 
-Create a build config in the OpenShift and start build the Spark image.
+Create a build config and start build a spark image.
 
 ```
 $ oc create -f openshift/build-spark-base.yaml
@@ -43,7 +45,7 @@ spark-2.4.2-1-build   0/1       Completed   0          6m
 
 #### Spark Master
 
-Create a deployment config and start pod.
+Create a deployment config and start master.
 
 ```
 $ oc create -f openshift/deploy-spark-master.yaml
@@ -59,33 +61,34 @@ spark-2.4.2-1-build    0/1       Completed   0          4m
 spark-master-1-mxlhj   1/1       Running     0          55s
 ```
 
-Create a services with endpoints.
+Create a services and endpoints.
 
 ```
 $ oc create -f openshift/service_spark_master.yaml
 $ oc create -f openshift/service_spark_master_ui.yaml
 ```
 
-Expose the service and create the route to allow external connections reach Spark WebUI by name.
+Expose a service and create a route to allow external connections reach Spark by DNS name.
 
 ```
 $ oc expose svc/spark-master-ui --name=spark-master-ui --port=8080
 
 ```
-Check route and try to access the Spark via Web browser or cURL.
+Check a route and try to access the Spark via Web browser or cURL.
 
 ```
 $ oc get route spark-master-ui
-$ curl -s http://${spark-master-ui}
+$ curl -s http://${SPARK_MASTER_UI}
 ```
 
-> If you'd like to configure HTTPS with selfsigned certificate using TLS handshake and edge termination.
-Please install "keytool" and generate a keystore, otherwise just skip this step.
+> If you'd like to configure secure HTTPS connection with selfsigned certificate using TLS edge termination.
+>
+> Please install "keytool" and generate a keystore, otherwise just skip this step and move to Spark Workers.
 
-> ATTENTION: Replace a var=${secret} with password.
+> ATTENTION: Replace a var=${SECRET_PASS} with password.
 
 ```
-$ keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass ${secret} -validity 360 -keysize 2048
+$ keytool -genkey -keyalg RSA -alias selfsigned -keystore keystore.jks -storepass ${SECRET_PASS} -validity 360 -keysize 2048
 # Convert to pkcs12
 $ keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -srcstoretype jks -deststoretype pkcs12
 ```
@@ -93,13 +96,13 @@ $ keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.p12 -
 Once key has been created, open it with OpenSSL.
 
 ```
-$ openssl pkcs12 -in keystore.p12 -nodes -password pass:${secret}
+$ openssl pkcs12 -in keystore.p12 -nodes -password pass:${SECRET_PASS}
 
 ```
 
-Copy certificate with private key and save in the notes.
+Copy certificate with private key that have been displayed and save in the notes.
 
-Edit you route and insert TLS configuration in the "spec:" collection,  behind the "port:" key.
+Edit route and insert TLS configuration in the "spec:" collection,  behind the "port:" key as described below:
 
 ```
 oc edit route spark-master-ui
@@ -128,47 +131,63 @@ Check route and try to access via HTTPS.
 
 ```
 $ oc get route spark-master-ui
-$ curl -sk https://${spark-master-ui}
+$ curl -sk https://${SPARK_MASTER_UI}
 ```
 
 #### Spark Workers
 
 ##### Deploy
 
-Create a deployment config and start pods.
+Create a deployment config and start workers.
 
-> The default setup starts only 3 workers, you can change this in deploy-spark-worker.yaml. Replace a value in the key "replicas:"
+> The default setup starts only 3 workers, you can change this in deploy-spark-worker.yaml file. Replace a value in the key "replicas:"
 
 ```
 $ oc create -f openshift/deploy-spark-workers.yaml
 ```
 
-#### Spark Submit
+Check logs and workers state "Running".
+```
+$ oc logs -f dc/spark-workers
+$ oc get pods
+NAME                    READY     STATUS      RESTARTS   AGE
+spark-2.4.2-1-build     0/1       Completed   0          37m
+spark-master-1-7xqdq    1/1       Running     0          34m
+spark-workers-1-7tj9d   1/1       Running     0          5m
+spark-workers-1-8fbh2   1/1       Running     0          5m
+spark-workers-1-kfdcm   1/1       Running     0          5m
+```
 
-##### Launching Applications with spark-submit
+If you see the same output with all pods are "Running", means you successfully installed Spark cluster :)
 
-[Download Spark](https://spark.apache.org/downloads.html) release to local machine.
+## Launching Applications with spark-submit.
 
-Check provider global firewall settings and allow TCP connection to the port 30077.  
+This section explains how to submit applications to the cluster remotely.
+
+1. [Download Spark](https://spark.apache.org/downloads.html) release to local machine.
+
+2. Check firewall settings and allow TCP connections to the node port 30077.  
+
+> You don't need to change anything on the OpenShift server, a step above only applies to the external firewalls belong to AWS Security Groups, Data-Centers, etc.
 
 > Current project runs with Spark version 2.4.2.
 
-> It’s important that the Spark version running on your driver, master, and worker pods all match.
+> It’s important that the Spark version running on the driver, master, and worker pods all match.
 
-Try to run Python application on a Spark Cluster.
+3. Try to run Python application on the cluster.
 
 ```
 cd spark-2.4.2-bin-hadoop2.7
 
 ./bin/spark-submit \
-  --master spark://176.9.28.34:30077 --name myapp  \
+  --master spark://${OPENSHIFT_CLUSTER_IP}:30077 --name myapp  \
   ${PWD}/examples/src/main/python/pi.py 10
 
 ```
 
-If you see successfully created connection to the cluster and running application in Spark UI, means you are done with setup.
+If connection successful has been created to the cluster and you see the running application in Spark UI, it means you've completed testing.
 
-Hope you enjoyed the setup and ready to launch your application!
+Hope you enjoyed the setup and ready to launch new applications!
 
 ## Contributing
 

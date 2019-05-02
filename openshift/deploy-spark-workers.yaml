@@ -1,7 +1,7 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: spark-worker
+  name: spark-workers
 spec:
   replicas: 3
   strategy:
@@ -9,7 +9,7 @@ spec:
   template:
     metadata:
       labels:
-        name: spark-worker
+        name: spark-workers
     spec:
       containers:
       - image: docker-registry.default.svc:5000/spark-openshift/spark:2.4.2
