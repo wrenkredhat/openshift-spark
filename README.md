@@ -166,23 +166,33 @@ This section explains how to submit applications to the cluster remotely.
 
 2. Check firewall settings and allow TCP connections to the node port 30077.  
 
-> You don't need to change anything on the OpenShift server, a step above only applies to the external firewalls belong to AWS Security Groups, Data-Centers, etc.
+> You don't need to change anything on the OpenShift server, a step above only applies to the external firewalls belong to AWS Security Groups, Data-Centers providers like Hetzner, etc.
 
 > Current project runs with Spark version 2.4.2.
 
 > It’s important that the Spark version running on the driver, master, and worker pods all match.
 
-3. Try to run Python application on the cluster.
+3. Try to run Python or Java example application on the cluster.
 
 ```
 cd spark-2.4.2-bin-hadoop2.7
 
+# Python
 ./bin/spark-submit \
   --master spark://${OPENSHIFT_CLUSTER_IP}:30077 --name myapp  \
   ${PWD}/examples/src/main/python/pi.py 10
 
+# Java
+./bin/spark-submit \
+  --class org.apache.spark.examples.SparkPi \
+  --master spark://${OPENSHIFT_CLUSTER_IP}:30077 \
+  --name myapp \
+  --deploy-mode client \
+  --supervise \
+  --executor-memory 4G \
+  --total-executor-cores 100 \
+  local://${PWD}/examples/jars/spark-examples_2.12-2.4.2.jar 10
 ```
-
 If connection successful has been created to the cluster and you see the running application in Spark UI, it means you've completed testing.
 
 Hope you enjoyed the setup and ready to launch new applications!
