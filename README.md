@@ -215,6 +215,10 @@ Hope you enjoyed the setup and ready to launch new applications!
 
 ## License
 
+This project is licensed under the terms of the MIT license.
+
+See [COPYING](https://github.com/bodz1lla/openshift-spark/blob/develop/LICENSE) to see the full text.
+
 ## Acknowledgments
 
 * [The Apache Software Foundation](https://github.com/apache) - Apache Spark
