@@ -39,13 +39,18 @@ case $SPARK_CMD in
         "org.apache.spark.deploy.master.Master"
       )
       ;;
-    worker)
-      CMD=(
-        "$SPARK_HOME/bin/spark-class"
-        "org.apache.spark.deploy.worker.Worker"
-        $MASTER_URL
-      )
-      ;;
+      worker)
+        CMD=(
+          "$SPARK_HOME/bin/spark-class"
+          "org.apache.spark.deploy.worker.Worker"
+          $MASTER_URL
+        )
+        ;;
+      jumper)
+        CMD=(
+            "nohup /bin/sh &"
+          )
+          ;;
     *)
       echo "Unknown command: $SPARK_CMD" 1>&2
       exit 1
