@@ -34,7 +34,8 @@ USER root
 RUN chgrp root /etc/passwd && chmod ug+rw /etc/passwd
 
 # Install required RPMs and ensure that the packages were installed
-RUN yum install -y java-1.8.0-openjdk wget && \
+RUN yum install -y http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm && \
+    yum install -y java-1.8.0-openjdk wget shellinabox openssl expect && \
     yum clean all -y && \
     rm -rf /var/cache/yum
 
@@ -57,6 +58,19 @@ RUN cd opt; tar --no-same-owner -zxf spark-${SPARK_VERSION}-bin-hadoop2.7.tgz &&
 RUN chgrp -R 0 ${SPARK_HOME} && chmod -R g+rw ${SPARK_HOME}
 
 COPY entrypoint.sh ${SPARK_HOME}
+COPY startsiab.sh ${SPARK_HOME}
+
+run echo "\n=== Installing 'developer' user ===" && \
+    useradd -u 1001 developer -m && \
+    mkdir -pv /home/developer/bin /home/developer/tmp && \
+    chown -R 1001:1001 /home/developer && \
+    echo "\n=== Setting the default password for our 'developer' user ===" && \
+    ( echo "developer" | passwd developer --stdin ) && \
+    echo "\n=== Randomizing root's password ===" && \
+    ( cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 128 | head -n 1 | passwd root --stdin ) && \
+    echo "\n=== Removing login's lock file ===" && \
+    rm -f /var/run/nologin && \
+    echo "*** Done building siab container ***"
 
 WORKDIR ${SPARK_HOME}
 

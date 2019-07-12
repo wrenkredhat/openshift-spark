@@ -47,9 +47,14 @@ case $SPARK_CMD in
         )
         ;;
       jumper)
-        CMD=(
-            "nohup /bin/sh &"
-          )
+            #rpm -qa | grep shellinabox
+            #which shellinaboxd
+            #/usr/sbin/shellinaboxd -t -p 8080 --service=/:SSH
+            #/usr/sbin/shellinaboxd -t -p 8080 --service=/:SSH -s '/:root:root:/:w -c /bin/sh'
+            #/usr/sbin/shellinaboxd -t -p 8080 -s /:AUTH:HOME:/bin/bash
+            sh <$SPARK_HOME/startsiab.sh
+            exit
+            #startsiab.sh
           ;;
     *)
       echo "Unknown command: $SPARK_CMD" 1>&2

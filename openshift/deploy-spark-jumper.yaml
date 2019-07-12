@@ -1,32 +1,21 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: spark-workers
+  name: spark-jumper
 spec:
-  replicas: 3
+  replicas: 1
   strategy:
     resources: {}
   template:
     metadata:
       labels:
-        name: spark-workers
+        name: spark-jumpers
     spec:
       containers:
-      - image: docker-registry.default.svc:5000/spark-openshift/spark:2.4.2
-        name: spark-worker
+      - image: docker-registry.default.svc:5000/spark/spark:2.4.2
+        name: spark-jumper
         args:
           - 'jumper'
-          - 'spark://spark-master:7077'
-        readinessProbe:
-          tcpSocket:
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        livenessProbe:
-          tcpSocket:
-            port: 8081
-          initialDelaySeconds: 10
-          periodSeconds: 10
         resources: {}
   restartPolicy: Always
   test: false
@@ -35,7 +24,7 @@ spec:
   - imageChangeParams:
       automatic: true
       containerNames:
-      - spark-worker
+      - spark-jumper
       from:
         kind: ImageStreamTag
         name: spark:2.4.2
