@@ -17,9 +17,13 @@ spec:
         args:
           - 'jumper'
         resources: {}
-        serviceAccount: siab
-        serviceAccountName: siab
-        restartPolicy: Always
+        securityContext:
+          privileged: true
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 0
+      serviceAccount: mysvcacct
+      serviceAccountName: mysvcacct
   test: false
   triggers:
   - type: ConfigChange
