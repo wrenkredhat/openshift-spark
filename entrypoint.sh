@@ -52,8 +52,8 @@ case $SPARK_CMD in
             #/usr/sbin/shellinaboxd -t -p 8080 --service=/:SSH
             #/usr/sbin/shellinaboxd -t -p 8080 --service=/:SSH -s '/:root:root:/:w -c /bin/sh'
             #/usr/sbin/shellinaboxd -t -p 8080 -s /:AUTH:HOME:/bin/bash
-            su developer -c 'sh "./startsiab.sh"'
-            #sh <$SPARK_HOME/startsiab.sh
+            #su developer -c 'sh "./startsiab.sh"'
+            sh <$SPARK_HOME/startsiab.sh
             exit
             #startsiab.sh
           ;;
