@@ -9,7 +9,7 @@ spec:
   template:
     metadata:
       labels:
-        name: spark-jumpers
+        name: spark-jumper
     spec:
       containers:
       - image: docker-registry.default.svc:5000/spark/spark:2.4.2
@@ -17,7 +17,9 @@ spec:
         args:
           - 'jumper'
         resources: {}
-  restartPolicy: Always
+        serviceAccount: siab
+        serviceAccountName: siab
+        restartPolicy: Always
   test: false
   triggers:
   - type: ConfigChange
