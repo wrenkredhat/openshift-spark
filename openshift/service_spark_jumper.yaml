@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: spark-master-ui
+  name: spark-jumper
   labels:
-    name: spark-master-ui
+    name: spark-jumper
 spec:
   ports:
-  - name: master-ui
-    port: 8082
+  - name: jumper
+    port: 8085
     protocol: TCP
     targetPort: 8080
   selector:
-    name: spark-master
+    name: spark-jumper

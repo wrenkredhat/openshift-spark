@@ -28,14 +28,14 @@ ENV \
     PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${SPARK_HOME}/bin" \
     TINI_VERSION="v0.18.0"
 
-USER root
+USER 0
 
 # Set permissions to passwd with group-id 0 and write access
 RUN chgrp root /etc/passwd && chmod ug+rw /etc/passwd
 
 # Install required RPMs and ensure that the packages were installed
 RUN yum install -y http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm && \
-    yum install -y java-1.8.0-openjdk wget shellinabox openssl expect && \
+    yum install -y java-1.8.0-openjdk wget shellinabox openssl expect git && \
     yum clean all -y && \
     rm -rf /var/cache/yum
 
