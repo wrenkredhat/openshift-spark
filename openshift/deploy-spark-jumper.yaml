@@ -19,6 +19,13 @@ spec:
         resources: {}
         securityContext:
           privileged: true
+        volumeMounts:
+          - mountPath: "/home/developer"
+            name: "pvol"
+      volumes:
+        - name: "pvol"
+          persistentVolumeClaim:
+          claimName: "jumper-pvc"
       restartPolicy: Always
       securityContext:
         runAsUser: 0
